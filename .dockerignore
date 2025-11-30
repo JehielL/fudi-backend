@@ -1,0 +1,49 @@
+# ==========================================
+# DOCKER IGNORE - BITEBOOKING
+# ==========================================
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Maven
+target/
+!target/backend-0.0.1-SNAPSHOT.jar
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local config
+*.local
+.env
+.env.*
+
+# MySQL data (no subir a Docker)
+mysql_data/
+
+# Uploads locales
+uploads/
+
+# Documentación
+*.md
+!README.md
+docs/
+
+# Tests
+src/test/
+
+# Docker
+docker-compose.yml
+dockerfile.dev

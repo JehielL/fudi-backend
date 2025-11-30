@@ -1,0 +1,64 @@
+# ==========================================
+# RENDER BLUEPRINT - BITEBOOKING BACKEND
+# ==========================================
+# Documentación: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: bitebooking-api
+    runtime: docker
+    dockerfilePath: ./dockerfile
+    dockerContext: .
+    
+    # Plan gratuito de Render
+    plan: free
+    
+    # Región (opcional)
+    region: frankfurt  # o oregon, ohio, singapore
+    
+    # Configuración del health check
+    healthCheckPath: /actuator/health
+    
+    # Variables de entorno
+    envVars:
+      # Puerto (Render lo asigna automáticamente)
+      - key: PORT
+        value: 8080
+      
+      # Base de datos (configurar en Render Dashboard)
+      - key: SPRING_DATASOURCE_URL
+        sync: false  # Se configura manualmente en dashboard
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      
+      # Configuración JPA
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: SPRING_JPA_SHOW_SQL
+        value: "false"
+      
+      # JWT Secret (generar uno seguro)
+      - key: JWT_SECRET
+        generateValue: true  # Render genera un valor aleatorio
+      
+      # Configuración de archivos
+      - key: SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE
+        value: 5MB
+      - key: SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE
+        value: 15MB
+      
+      # Perfil de Spring
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      
+      # Java options para optimizar memoria en plan free
+      - key: JAVA_OPTS
+        value: "-Xmx400m -Xms200m -XX:+UseG1GC"
+
+    # Disco persistente para uploads (opcional - tiene costo)
+    # disk:
+    #   name: uploads
+    #   mountPath: /app/uploads
+    #   sizeGB: 1

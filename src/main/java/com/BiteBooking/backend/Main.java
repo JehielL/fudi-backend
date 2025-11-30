@@ -3,7 +3,6 @@ package com.BiteBooking.backend;
 
 import com.BiteBooking.backend.model.*;
 import com.BiteBooking.backend.repository.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -22,11 +21,19 @@ public class Main {
 		ApplicationContext context = SpringApplication.run(Main.class, args);
 
 		// Repositorios
+		UserRepository userRepository = context.getBean(UserRepository.class);
+		
+		// Solo insertar datos de prueba si la base de datos está vacía
+		if (userRepository.count() > 0) {
+			System.out.println(">>> Base de datos ya tiene datos, saltando inicialización...");
+			return;
+		}
+		
+		System.out.println(">>> Base de datos vacía, insertando datos de prueba...");
+		
 		RestaurantRepository restaurantRepository = context.getBean(RestaurantRepository.class);
 		MenuRepository menuRepository = context.getBean(MenuRepository.class);
-		UserRepository userRepository = context.getBean(UserRepository.class);
 		BookingRepository bookingRepository = context.getBean(BookingRepository.class);
-		DishRepository dishRepository = context.getBean(DishRepository.class);
 		RatingRepository ratingRepository = context.getBean(RatingRepository.class);
 
 		PasswordEncoder passwordEncoder = context.getBean(PasswordEncoder.class);
@@ -76,48 +83,48 @@ public class Main {
 		menuRepository.saveAll(List.of(menu1, menu2, menu3, menu4, menu5, menu6, menu7, menu8, menu9, menu10, menu11, menu12, menu13, menu14, menu15, menu16, menu17, menu18,menu19, menu20,menu21, menu22));
 
 		//RATINGS
-		Rating R1 = new Rating(null, 4,"Comentaario de prueba1", menu1, user1);
-		Rating R2 = new Rating(null, 4,"Comentaario de prueba2", menu2, user2);
-		Rating R3 = new Rating(null, 4,"Comentaario de prueba3", menu3, user3);
-		Rating R4 = new Rating(null, 4,"Comentaario de prueba4", menu4, user4);
-		Rating R5 = new Rating(null, 4,"Comentaario de prueba5", menu5, user4);
-		Rating R6 = new Rating(null, 4,"Comentaario de prueba6", menu6, user3);
-		Rating R7 = new Rating(null, 4,"Comentaario de prueba7", menu7, user4);
-		Rating R8 = new Rating(null, 4,"Comentaario de prueba8", menu8, user2);
-		Rating R9 = new Rating(null, 3,"Comentaario de prueba9", menu9, user3);
-		Rating R10 = new Rating(null, 4,"Comentaario de prueba10", menu10, user1);
-		Rating R11 = new Rating(null, 4,"Comentaario de prueba11", menu11, user3);
-		Rating R12 = new Rating(null, 4,"Comentaario de prueba12", menu12, user2);
-		Rating R13 = new Rating(null, 4,"Comentaario de prueba", menu13, user4);
-		Rating R14 = new Rating(null, 4,"Comentaario de prueba", menu14, user3);
-		Rating R15 = new Rating(null, 4,"Comentaario de prueba", menu15, user2);
-		Rating R16= new Rating(null, 4,"Comentaario de prueba", menu16, user1);
-		Rating R17 = new Rating(null, 4,"Comentaario de prueba", menu17, user3);
-		Rating R18 = new Rating(null, 4,"Comentaario de prueba", menu18, user3);
-		Rating R19 = new Rating(null, 4,"Comentaario de prueba", menu19, user1);
-		Rating R20 = new Rating(null, 4,"¡Qué delicia! Este risotto de champiñones es simplemente divino. Los sabores se mezclan de manera perfecta, ¡una obra maestra culinaria!", menu20, user1);
-		Rating R21 = new Rating(null, 4,"¡No puedo resistirme a este exquisito sushi de salmón! La frescura del pescado y la textura del arroz son simplemente incomparables. ¡Una experiencia gastronómica inolvidable!", menu21, user2);
-		Rating R22 = new Rating(null, 4,"¡Este menu de paella me transporta directamente a la costa española! Los mariscos frescos y el arroz perfectamente sazonado hacen que cada bocado sea una explosión de sabor y tradición.", menu1, user3);
-		Rating R23 = new Rating(null, 4,"¡Increíble el sabor de este filete de ternera! Jugoso, tierno y lleno de sabor. Definitivamente, una elección ganadora para los amantes de la carne.", menu2, user4);
-		Rating R24 = new Rating(null, 4,"¡El aroma y sabor de este curry tailandés son simplemente adictivos! La combinación de especias y la cremosidad del curry hacen que sea una experiencia culinaria única.", menu3, user3);
-		Rating R25 = new Rating(null, 4,"¡Qué placer para el paladar este menu de tacos al pastor! La carne marinada con las especias adecuadas y la frescura de la piña hacen que cada bocado sea una explosión de sabor mexicano.", menu4, user1);
-		Rating R26 = new Rating(null, 4,"¡Esta lasaña de vegetales es simplemente celestial! Las capas de verduras frescas, salsa de tomate y queso derretido se combinan a la perfección en cada porción.", menu5, user2);
-		Rating R27 = new Rating(null, 4,"¡No puedo tener suficiente de este menu de ramen! Los fideos perfectamente cocidos, el caldo aromático y los trozos de carne tierna hacen que sea una verdadera delicia para el alma.", menu6, user3);
-		Rating R28 = new Rating(null, 4,"¡Este ceviche peruano es una obra maestra de frescura y sabor! El pescado marinado en limón con cilantro y cebolla roja es simplemente perfecto para refrescar el paladar.", menu7, user4);
-		Rating R29 = new Rating(null, 4,"¡Qué placer disfrutar de este menu de falafel! Crujiente por fuera, suave por dentro y acompañado de una salsa de tahini deliciosa. ¡Una explosión de sabor mediterráneo!", menu8, user3);
-		Rating R30 = new Rating(null, 4,"¡El sabor ahumado de esta barbacoa de costillas es simplemente incomparable! La carne se deshace en la boca y la salsa barbecue es la combinación perfecta de dulce y picante.", menu9, user1);
-		Rating R31 = new Rating(null, 4,"¡Este menu de pescado a la plancha es una verdadera delicia para los amantes de la cocina saludable! Fresco, ligero y lleno de sabor natural. ¡Una opción perfecta para una comida balanceada!", menu10, user1);
-		Rating R32 = new Rating(null, 4,"¡El aroma de esta pizza recién salida del horno es simplemente irresistible! El queso derretido, los ingredientes frescos y la masa crujiente hacen que cada bocado sea una experiencia culinaria inolvidable.", menu11, user2);
-		Rating R33 = new Rating(null, 4,"¡No puedo dejar de elogiar este menu de sushi de anguila! La anguila a la parrilla con la dulzura de la salsa teriyaki es simplemente celestial. ¡Una verdadera obra maestra japonesa!", menu12, user3);
-		Rating R34 = new Rating(null, 4,"¡Este menu de pollo al curry es una explosión de sabor en cada bocado! El pollo tierno, las verduras frescas y la mezcla perfecta de especias hacen que sea una experiencia culinaria auténtica.", menu13, user4);
-		Rating R35 = new Rating(null, 4,"¡Qué placer es disfrutar de esta tabla de quesos! La variedad de quesos, acompañados de frutos secos y mermeladas caseras, hacen que cada bocado sea una verdadera fiesta para el paladar.", menu14, user1);
-		Rating R36 = new Rating(null, 4,"¡Este menu de huevos benedictinos es la forma perfecta de empezar el día! Los huevos pochados, la salsa holandesa y el pan inglés tostado crean una combinación de sabores y texturas simplemente deliciosa.", menu15, user1);
-		Rating R37= new Rating(null, 4,"¡Las empanadas argentinas son simplemente irresistibles! El relleno jugoso de carne, las aceitunas y las especias hacen que cada bocado sea una explosión de sabor latinoamericano.", menu16, user1);
-		Rating R38 = new Rating(null, 4,"¡Este menu de pasta carbonara es simplemente exquisito! La pasta al dente, la salsa cremosa de huevo y panceta crujiente hacen que sea una verdadera delicia italiana.", menu17, user2);
-		Rating R39 = new Rating(null, 4,"¡Este menu de salmón a la parrilla es una verdadera joya culinaria! El salmón fresco, la piel crujiente y el toque de limón hacen que cada bocado sea una experiencia gastronómica memorable.", menu18, user3);
-		Rating R40 = new Rating(null, 4,"¡Este menu de salmón a la parrilla es una verdadera joya culinaria! El salmón fresco, la piel crujiente y el toque de limón hacen que cada bocado sea una experiencia gastronómica memorable.", menu19, user4);
-		Rating R41 = new Rating(null, 4,"¡Este menu de salmón a la parrilla es una verdadera joya culinaria! El salmón fresco, la piel crujiente y el toque de limón hacen que cada bocado sea una experiencia gastronómica memorable.", menu20, user1);
-		Rating R42 = new Rating(null, 4,"¡Este menu de salmón a la parrilla es una verdadera joya culinaria! El salmón fresco, la piel crujiente y el toque de limón hacen que cada bocado sea una experiencia gastronómica memorable.", menu21, user1);
+		Rating R1 = new Rating(null, 4,"Comentaario de prueba1", menu1, user1,null);
+		Rating R2 = new Rating(null, 4,"Comentaario de prueba2", menu2, user2,null);
+		Rating R3 = new Rating(null, 4,"Comentaario de prueba3", menu3, user3,null);
+		Rating R4 = new Rating(null, 4,"Comentaario de prueba4", menu4, user4,null);
+		Rating R5 = new Rating(null, 4,"Comentaario de prueba5", menu5, user4,null);
+		Rating R6 = new Rating(null, 4,"Comentaario de prueba6", menu6, user3,null);
+		Rating R7 = new Rating(null, 4,"Comentaario de prueba7", menu7, user4,null);
+		Rating R8 = new Rating(null, 4,"Comentaario de prueba8", menu8, user2,null);
+		Rating R9 = new Rating(null, 3,"Comentaario de prueba9", menu9, user3,null);
+		Rating R10 = new Rating(null, 4,"Comentaario de prueba10", menu10, user1,null);
+		Rating R11 = new Rating(null, 4,"Comentaario de prueba11", menu11, user3,null);
+		Rating R12 = new Rating(null, 4,"Comentaario de prueba12", menu12, user2,null);
+		Rating R13 = new Rating(null, 4,"Comentaario de prueba", menu13, user4,null);
+		Rating R14 = new Rating(null, 4,"Comentaario de prueba", menu14, user3,null);
+		Rating R15 = new Rating(null, 4,"Comentaario de prueba", menu15, user2,null);
+		Rating R16= new Rating(null, 4,"Comentaario de prueba", menu16, user1,null);
+		Rating R17 = new Rating(null, 4,"Comentaario de prueba", menu17, user3,null);
+		Rating R18 = new Rating(null, 4,"Comentaario de prueba", menu18, user3,null);
+		Rating R19 = new Rating(null, 4,"Comentaario de prueba", menu19, user1,null);
+		Rating R20 = new Rating(null, 4,"¡Qué delicia! Este risotto de champiñones es simplemente divino. Los sabores se mezclan de manera perfecta, ¡una obra maestra culinaria!", menu20, user1,null);
+		Rating R21 = new Rating(null, 4,"¡No puedo resistirme a este exquisito sushi de salmón! La frescura del pescado y la textura del arroz son simplemente incomparables. ¡Una experiencia gastronómica inolvidable!", menu21, user2,null);
+		Rating R22 = new Rating(null, 4,"¡Este menu de paella me transporta directamente a la costa española! Los mariscos frescos y el arroz perfectamente sazonado hacen que cada bocado sea una explosión de sabor y tradición.", menu1, user3,null);
+		Rating R23 = new Rating(null, 4,"¡Increíble el sabor de este filete de ternera! Jugoso, tierno y lleno de sabor. Definitivamente, una elección ganadora para los amantes de la carne.", menu2, user4,null);
+		Rating R24 = new Rating(null, 4,"¡El aroma y sabor de este curry tailandés son simplemente adictivos! La combinación de especias y la cremosidad del curry hacen que sea una experiencia culinaria única.", menu3, user3,null);
+		Rating R25 = new Rating(null, 4,"¡Qué placer para el paladar este menu de tacos al pastor! La carne marinada con las especias adecuadas y la frescura de la piña hacen que cada bocado sea una explosión de sabor mexicano.", menu4, user1,null);
+		Rating R26 = new Rating(null, 4,"¡Esta lasaña de vegetales es simplemente celestial! Las capas de verduras frescas, salsa de tomate y queso derretido se combinan a la perfección en cada porción.", menu5, user2,null);
+		Rating R27 = new Rating(null, 4,"¡No puedo tener suficiente de este menu de ramen! Los fideos perfectamente cocidos, el caldo aromático y los trozos de carne tierna hacen que sea una verdadera delicia para el alma.", menu6, user3,null);
+		Rating R28 = new Rating(null, 4,"¡Este ceviche peruano es una obra maestra de frescura y sabor! El pescado marinado en limón con cilantro y cebolla roja es simplemente perfecto para refrescar el paladar.", menu7, user4,null);
+		Rating R29 = new Rating(null, 4,"¡Qué placer disfrutar de este menu de falafel! Crujiente por fuera, suave por dentro y acompañado de una salsa de tahini deliciosa. ¡Una explosión de sabor mediterráneo!", menu8, user3,null);
+		Rating R30 = new Rating(null, 4,"¡El sabor ahumado de esta barbacoa de costillas es simplemente incomparable! La carne se deshace en la boca y la salsa barbecue es la combinación perfecta de dulce y picante.", menu9, user1,null);
+		Rating R31 = new Rating(null, 4,"¡Este menu de pescado a la plancha es una verdadera delicia para los amantes de la cocina saludable! Fresco, ligero y lleno de sabor natural. ¡Una opción perfecta para una comida balanceada!", menu10, user1,null);
+		Rating R32 = new Rating(null, 4,"¡El aroma de esta pizza recién salida del horno es simplemente irresistible! El queso derretido, los ingredientes frescos y la masa crujiente hacen que cada bocado sea una experiencia culinaria inolvidable.", menu11, user2,null);
+		Rating R33 = new Rating(null, 4,"¡No puedo dejar de elogiar este menu de sushi de anguila! La anguila a la parrilla con la dulzura de la salsa teriyaki es simplemente celestial. ¡Una verdadera obra maestra japonesa!", menu12, user3,null);
+		Rating R34 = new Rating(null, 4,"¡Este menu de pollo al curry es una explosión de sabor en cada bocado! El pollo tierno, las verduras frescas y la mezcla perfecta de especias hacen que sea una experiencia culinaria auténtica.", menu13, user4,null);
+		Rating R35 = new Rating(null, 4,"¡Qué placer es disfrutar de esta tabla de quesos! La variedad de quesos, acompañados de frutos secos y mermeladas caseras, hacen que cada bocado sea una verdadera fiesta para el paladar.", menu14, user1,null);
+		Rating R36 = new Rating(null, 4,"¡Este menu de huevos benedictinos es la forma perfecta de empezar el día! Los huevos pochados, la salsa holandesa y el pan inglés tostado crean una combinación de sabores y texturas simplemente deliciosa.", menu15, user1,null);
+		Rating R37= new Rating(null, 4,"¡Las empanadas argentinas son simplemente irresistibles! El relleno jugoso de carne, las aceitunas y las especias hacen que cada bocado sea una explosión de sabor latinoamericano.", menu16, user1,null);
+		Rating R38 = new Rating(null, 4,"¡Este menu de pasta carbonara es simplemente exquisito! La pasta al dente, la salsa cremosa de huevo y panceta crujiente hacen que sea una verdadera delicia italiana.", menu17, user2,null);
+		Rating R39 = new Rating(null, 4,"¡Este menu de salmón a la parrilla es una verdadera joya culinaria! El salmón fresco, la piel crujiente y el toque de limón hacen que cada bocado sea una experiencia gastronómica memorable.", menu18, user3,null);
+		Rating R40 = new Rating(null, 4,"¡Este menu de salmón a la parrilla es una verdadera joya culinaria! El salmón fresco, la piel crujiente y el toque de limón hacen que cada bocado sea una experiencia gastronómica memorable.", menu19, user4,null);
+		Rating R41 = new Rating(null, 4,"¡Este menu de salmón a la parrilla es una verdadera joya culinaria! El salmón fresco, la piel crujiente y el toque de limón hacen que cada bocado sea una experiencia gastronómica memorable.", menu20, user1,null);
+		Rating R42 = new Rating(null, 4,"¡Este menu de salmón a la parrilla es una verdadera joya culinaria! El salmón fresco, la piel crujiente y el toque de limón hacen que cada bocado sea una experiencia gastronómica memorable.", menu21, user1,null);
 		ratingRepository.saveAll(List.of(R1,R2,R3,R4,R5,R6,R7,R8,R9,
 				R10,R11,R12,R13,R14,R15,R16,R17,R18,R19,
 				R20,R21,R22,R23, R24, R25, R26, R27, R28, R29,R30, R31, R32, R33, R34, R35, R36, R37, R38, R39, R40, R41, R42));

@@ -15,44 +15,34 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 
 public class SecurityConfig {
-private final RequestJWTFilter requestJWTFilter;
-@Bean
-public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-}
+    private final RequestJWTFilter requestJWTFilter;
 
-@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
-    /*return http
-.csrf(csrf -> csrf.disable())
-.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-.requestMatchers("/users/login").permitAll()
-.requestMatchers("/users/register").permitAll()
-.anyRequest().authenticated()
-).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-.build();*/
-
-        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.authorizeHttpRequests()
-                .requestMatchers("users/login", "users/register","files/**", "users/account/avatar").permitAll()
-
-
-                .requestMatchers(HttpMethod.GET).permitAll()
-
-                .requestMatchers("/users/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/users/account/avatar").permitAll()
-                .requestMatchers(HttpMethod.PUT , "/users/account/avatar").permitAll()
-
-                .requestMatchers(HttpMethod.POST, "menus", "dishes", "restaurant").hasAnyAuthority("ADMIN", "RESTAURANT")
-                .requestMatchers(HttpMethod.PUT, "menus", "dishes", "restaurant").hasAnyAuthority("ADMIN", "RESTAURANT")
-                .requestMatchers(HttpMethod.DELETE, "menus", "dishes").hasAnyAuthority("ADMIN", "RESTAURANT")
-
-                .anyRequest().authenticated();
-
-        http.addFilterBefore(requestJWTFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/users/login", "/users/register", "/files/**", "/users/account/avatar",
+                                "/error")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/account/avatar").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/users/account/avatar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/menus", "/dishes", "/restaurant")
+                        .hasAnyAuthority("ADMIN", "RESTAURANT")
+                        .requestMatchers(HttpMethod.PUT, "/menus", "/dishes", "/restaurant")
+                        .hasAnyAuthority("ADMIN", "RESTAURANT")
+                        .requestMatchers(HttpMethod.DELETE, "/menus", "/dishes").hasAnyAuthority("ADMIN", "RESTAURANT")
+                        .anyRequest().authenticated())
+                .addFilterBefore(requestJWTFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
+
 }

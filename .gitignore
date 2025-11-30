@@ -12,7 +12,7 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
+.uploads
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -35,7 +35,7 @@ build/
 mysql_data/*.sock
 mysql_data/*.pid
 mysql_data/*.err
-
+mysql_data/**
 # Ignorar archivos específicos del sistema
 *.log
 *.tmp

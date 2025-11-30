@@ -34,8 +34,6 @@ public class RequestJWTFilter extends OncePerRequestFilter {
         log.info("Ejecutando");
 
 
-        //extraer el token de la cabecera Authorization de la request
-
         String bearerToken = request.getHeader("Authorization");
         String token = "";
 
@@ -49,7 +47,7 @@ public class RequestJWTFilter extends OncePerRequestFilter {
 
         log.info("Extraido token JWT {}", token);
 
-        // verificar el token
+        // verificar el token y extraer el id del usuario
 
         byte[] key = Base64.getDecoder().decode("wLd39ypA5uOeydsszUh3f6OXijomn+VVIpFlaDkF86w=");
 

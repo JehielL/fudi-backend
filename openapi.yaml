@@ -1,0 +1,1244 @@
+openapi: 3.0.3
+info:
+  title: BiteBooking API
+  description: API REST para el sistema de reservas de restaurantes BiteBooking
+  version: 1.0.0
+  contact:
+    name: BiteBooking Team
+    email: support@bitebooking.com
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor de desarrollo
+  - url: https://api.bitebooking.com
+    description: Servidor de producción
+
+tags:
+  - name: Users
+    description: Gestión de usuarios y autenticación
+  - name: Restaurants
+    description: Gestión de restaurantes
+  - name: Menus
+    description: Gestión de menús
+  - name: Ratings
+    description: Gestión de calificaciones con imágenes
+  - name: Bookings
+    description: Gestión de reservas
+  - name: Files
+    description: Gestión de archivos
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token JWT obtenido desde /users/login
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        role:
+          type: string
+          enum: [USER, ADMIN]
+        imgUser:
+          type: string
+        city:
+          type: string
+        aboutMe:
+          type: string
+        birthdayDate:
+          type: string
+          format: date
+
+    Restaurant:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        phone:
+          type: string
+        restaurantType:
+          type: string
+          enum: [ITALIANA, MEXICANA, CHINA, JAPONESA, ESPAÑOLA, AMERICANA, VEGETARIANA, VEGANA]
+        description:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+        number:
+          type: string
+        postalCode:
+          type: string
+        imageUrl:
+          type: string
+        openingTime:
+          type: string
+          format: time
+        closingTime:
+          type: string
+          format: time
+        owner:
+          $ref: '#/components/schemas/User'
+
+    Menu:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: double
+        imgMenu:
+          type: string
+        restaurant:
+          $ref: '#/components/schemas/Restaurant'
+
+    Rating:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        score:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+          maxLength: 1000
+        likesCount:
+          type: integer
+          description: Número total de likes del rating
+          default: 0
+        menu:
+          $ref: '#/components/schemas/Menu'
+        user:
+          $ref: '#/components/schemas/User'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/RatingImage'
+
+    LikeResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Mensaje descriptivo de la acción realizada
+          example: "Like agregado"
+        liked:
+          type: boolean
+          description: Estado actual del like (true si el usuario tiene like activo)
+        likesCount:
+          type: integer
+          description: Número total de likes después de la acción
+
+    RatingImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        imagePath:
+          type: string
+          description: Nombre del archivo guardado
+        imageOrder:
+          type: integer
+          description: Orden de la imagen (1, 2, 3)
+        rating:
+          $ref: '#/components/schemas/Rating'
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        date:
+          type: string
+          format: date-time
+        numberOfPeople:
+          type: integer
+        status:
+          type: string
+        restaurant:
+          $ref: '#/components/schemas/Restaurant'
+        user:
+          $ref: '#/components/schemas/User'
+
+    Login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    Register:
+      type: object
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        birthdayDate:
+          type: string
+          format: date
+
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token JWT para autenticación
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        status:
+          type: integer
+
+paths:
+  # ==================== USERS ====================
+  /users/register:
+    post:
+      tags:
+        - Users
+      summary: Registrar nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+      responses:
+        '200':
+          description: Usuario registrado exitosamente
+        '400':
+          description: Email ya existe
+
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Iniciar sesión
+      description: Autentica un usuario y retorna un token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '401':
+          description: Credenciales incorrectas
+        '404':
+          description: Usuario no encontrado
+
+  /users/account:
+    get:
+      tags:
+        - Users
+      summary: Obtener usuario actual
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Usuario actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: No autenticado
+
+    put:
+      tags:
+        - Users
+      summary: Actualizar perfil de usuario
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Usuario actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/account/avatar:
+    post:
+      tags:
+        - Users
+      summary: Subir avatar de usuario
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Avatar actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /user:
+    get:
+      tags:
+        - Users
+      summary: Listar todos los usuarios
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /user/{id}:
+    get:
+      tags:
+        - Users
+      summary: Obtener usuario por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuario no encontrado
+
+  # ==================== RATINGS ====================
+  /ratings:
+    post:
+      tags:
+        - Ratings
+      summary: Crear rating con imágenes
+      description: Crea un nuevo rating para un menú. Permite adjuntar hasta 3 imágenes (jpg, jpeg, png, gif, webp). Máximo 5MB por imagen.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - score
+                - comment
+                - menuId
+              properties:
+                score:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  description: Puntuación del 1 al 5
+                comment:
+                  type: string
+                  maxLength: 1000
+                  description: Comentario del usuario
+                menuId:
+                  type: integer
+                  format: int64
+                  description: ID del menú a calificar
+                images:
+                  type: array
+                  maxItems: 3
+                  items:
+                    type: string
+                    format: binary
+                  description: Lista de imágenes (máximo 3)
+      responses:
+        '200':
+          description: Rating creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rating'
+        '400':
+          description: Datos inválidos o más de 3 imágenes
+        '404':
+          description: Menú no encontrado
+        '401':
+          description: Usuario no autenticado
+
+  /ratings/{id}:
+    get:
+      tags:
+        - Ratings
+      summary: Obtener rating por ID
+      description: Retorna un rating específico con todas sus imágenes asociadas
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID del rating
+      responses:
+        '200':
+          description: Rating encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rating'
+        '404':
+          description: Rating no encontrado
+
+    put:
+      tags:
+        - Ratings
+      summary: Actualizar rating
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Rating'
+      responses:
+        '200':
+          description: Rating actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rating'
+        '404':
+          description: Rating no encontrado
+
+    delete:
+      tags:
+        - Ratings
+      summary: Eliminar rating
+      description: Elimina un rating y todas sus imágenes asociadas. Solo el propietario o un administrador pueden realizar esta acción.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Rating eliminado exitosamente
+        '401':
+          description: No autorizado
+        '404':
+          description: Rating no encontrado
+
+  /menus/filter-by-menu/{id}:
+    get:
+      tags:
+        - Ratings
+      summary: Obtener ratings por menú
+      description: Retorna todos los ratings de un menú específico ordenados por fecha (más recientes primero)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID del menú
+      responses:
+        '200':
+          description: Lista de ratings del menú
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rating'
+
+  /ratings/{id}/images:
+    get:
+      tags:
+        - Ratings
+      summary: Obtener imágenes de un rating
+      description: Retorna todas las imágenes asociadas a un rating específico, ordenadas por su orden
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID del rating
+      responses:
+        '200':
+          description: Lista de imágenes del rating
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RatingImage'
+
+  /ratings/{ratingId}/images/{imageId}:
+    delete:
+      tags:
+        - Ratings
+      summary: Eliminar imagen de un rating
+      description: Elimina una imagen específica de un rating. Solo el propietario del rating o un administrador pueden realizar esta acción.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID del rating
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID de la imagen
+      responses:
+        '200':
+          description: Imagen eliminada exitosamente
+        '401':
+          description: No autorizado
+        '404':
+          description: Rating o imagen no encontrada
+
+  # ==================== LIKES ====================
+  /ratings/{ratingId}/toggle-like:
+    post:
+      tags:
+        - Ratings
+      summary: Toggle like en un rating
+      description: |
+        Permite al usuario dar o quitar like a un rating. 
+        - Si el usuario NO tiene like en el rating, se agrega el like.
+        - Si el usuario YA tiene like en el rating, se elimina el like.
+        Requiere autenticación.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID del rating
+      responses:
+        '200':
+          description: Like toggle exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LikeResponse'
+              examples:
+                likeAdded:
+                  summary: Like agregado
+                  value:
+                    message: "Like agregado"
+                    liked: true
+                    likesCount: 15
+                likeRemoved:
+                  summary: Like eliminado
+                  value:
+                    message: "Like eliminado"
+                    liked: false
+                    likesCount: 14
+        '401':
+          description: Usuario no autenticado
+        '404':
+          description: Rating no encontrado
+
+  /ratings/{ratingId}/liked:
+    get:
+      tags:
+        - Ratings
+      summary: Verificar si el usuario dio like
+      description: |
+        Retorna el estado del like para el usuario actual y el contador total de likes.
+        Si el usuario no está autenticado, retorna liked=false pero sí muestra el contador.
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID del rating
+      responses:
+        '200':
+          description: Estado del like
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  liked:
+                    type: boolean
+                    description: true si el usuario actual dio like
+                  likesCount:
+                    type: integer
+                    description: Total de likes del rating
+              example:
+                liked: true
+                likesCount: 15
+        '404':
+          description: Rating no encontrado
+
+  /ratings/top:
+    get:
+      tags:
+        - Ratings
+      summary: Obtener ratings con más likes
+      description: Retorna todos los ratings ordenados por número de likes (mayor a menor)
+      responses:
+        '200':
+          description: Lista de ratings ordenados por likes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rating'
+
+  /ratings/menu/{menuId}/top:
+    get:
+      tags:
+        - Ratings
+      summary: Obtener ratings de un menú ordenados por likes
+      description: Retorna los ratings de un menú específico ordenados por número de likes (mayor a menor)
+      parameters:
+        - name: menuId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID del menú
+      responses:
+        '200':
+          description: Lista de ratings del menú ordenados por likes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rating'
+        '404':
+          description: Menú no encontrado
+
+  /ratings/menu/{menuId}/best:
+    get:
+      tags:
+        - Ratings
+      summary: Obtener ratings de un menú ordenados por score
+      description: Retorna los ratings de un menú específico ordenados por puntuación (mayor a menor)
+      parameters:
+        - name: menuId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID del menú
+      responses:
+        '200':
+          description: Lista de ratings del menú ordenados por score
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rating'
+
+  /ratings/popular:
+    get:
+      tags:
+        - Ratings
+      summary: Obtener ratings populares
+      description: Retorna ratings que tienen más de X likes
+      parameters:
+        - name: minLikes
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 5
+          description: Número mínimo de likes para considerar un rating como popular
+      responses:
+        '200':
+          description: Lista de ratings populares
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rating'
+
+  /ratings/user/{userId}:
+    get:
+      tags:
+        - Ratings
+      summary: Obtener ratings de un usuario
+      description: Retorna todos los ratings creados por un usuario específico
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID del usuario
+      responses:
+        '200':
+          description: Lista de ratings del usuario
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rating'
+
+  # ==================== RESTAURANTS ====================
+  /restaurant:
+    get:
+      tags:
+        - Restaurants
+      summary: Listar restaurantes
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filtrar por nombre
+      responses:
+        '200':
+          description: Lista de restaurantes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Restaurant'
+
+    post:
+      tags:
+        - Restaurants
+      summary: Crear restaurante
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - phone
+                - restaurantType
+                - city
+                - address
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+                restaurantType:
+                  type: string
+                description:
+                  type: string
+                city:
+                  type: string
+                address:
+                  type: string
+                number:
+                  type: string
+                postalCode:
+                  type: string
+                openingTime:
+                  type: string
+                  format: time
+                closingTime:
+                  type: string
+                  format: time
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Restaurante creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+
+  /restaurant/{id}:
+    get:
+      tags:
+        - Restaurants
+      summary: Obtener restaurante por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Restaurante encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+        '404':
+          description: Restaurante no encontrado
+
+    put:
+      tags:
+        - Restaurants
+      summary: Actualizar restaurante
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+                restaurantType:
+                  type: string
+                description:
+                  type: string
+                city:
+                  type: string
+                address:
+                  type: string
+                number:
+                  type: string
+                postalCode:
+                  type: string
+                openingTime:
+                  type: string
+                closingTime:
+                  type: string
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Restaurante actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+
+    delete:
+      tags:
+        - Restaurants
+      summary: Eliminar restaurante
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Restaurante eliminado
+        '404':
+          description: Restaurante no encontrado
+
+  /my-restaurants:
+    get:
+      tags:
+        - Restaurants
+      summary: Obtener mis restaurantes
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de restaurantes del usuario
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Restaurant'
+
+  # ==================== MENUS ====================
+  /menus:
+    get:
+      tags:
+        - Menus
+      summary: Listar todos los menús
+      responses:
+        '200':
+          description: Lista de menús
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Menu'
+
+    post:
+      tags:
+        - Menus
+      summary: Crear menú
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Menú creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+
+  /menus/{id}:
+    get:
+      tags:
+        - Menus
+      summary: Obtener menú por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Menú encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+        '404':
+          description: Menú no encontrado
+
+    put:
+      tags:
+        - Menus
+      summary: Actualizar menú
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Menú actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+
+    delete:
+      tags:
+        - Menus
+      summary: Eliminar menú
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Menú eliminado
+
+  /menus/byRestaurant/{restaurantId}:
+    get:
+      tags:
+        - Menus
+      summary: Obtener menús por restaurante
+      parameters:
+        - name: restaurantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Lista de menús del restaurante
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Menu'
+
+  # ==================== BOOKINGS ====================
+  /bookings:
+    get:
+      tags:
+        - Bookings
+      summary: Listar todas las reservas
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de reservas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+
+    post:
+      tags:
+        - Bookings
+      summary: Crear reserva
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
+      responses:
+        '200':
+          description: Reserva creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+
+  /bookings/{id}:
+    get:
+      tags:
+        - Bookings
+      summary: Obtener reserva por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Reserva encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '404':
+          description: Reserva no encontrada
+
+    put:
+      tags:
+        - Bookings
+      summary: Actualizar reserva
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
+      responses:
+        '200':
+          description: Reserva actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+
+    delete:
+      tags:
+        - Bookings
+      summary: Eliminar reserva
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Reserva eliminada
+
+  # ==================== FILES ====================
+  /files/{filename}:
+    get:
+      tags:
+        - Files
+      summary: Descargar/visualizar archivo
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Nombre del archivo
+      responses:
+        '200':
+          description: Archivo encontrado
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Archivo no encontrado

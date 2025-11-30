@@ -3,7 +3,7 @@
 # ==========================================
 
 # ----- STAGE 1: Build -----
-FROM maven:3.9.6-eclipse-temurin-19 AS builder
+FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests -B
 
 # ----- STAGE 2: Runtime -----
-FROM eclipse-temurin:19-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 

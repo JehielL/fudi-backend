@@ -1,0 +1,869 @@
+{
+  "info": {
+    "name": "BiteBooking API v2",
+    "description": "Coleccion completa y corregida para testear BiteBooking API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "restaurantId",
+      "value": "1"
+    },
+    {
+      "key": "userId",
+      "value": "1"
+    },
+    {
+      "key": "bookingId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. AUTH",
+      "item": [
+        {
+          "name": "Login - Gandalf (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "    console.log('Token guardado correctamente');",
+                  "}",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set('userId', jsonData.id);",
+                  "    console.log('User ID: ' + jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"gandalf@bitefood.es\",\n  \"password\": \"admin1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - Carlos (ADMIN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "}",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set('userId', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"carlos@bitefood.es\",\n  \"password\": \"admin1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - Jehiel (USER)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "}",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set('userId', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jehiel@bitefood.es\",\n  \"password\": \"admin1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "login"]
+            }
+          }
+        },
+        {
+          "name": "Register Nuevo Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nuevo@test.com\",\n  \"password\": \"password123\",\n  \"firstName\": \"Nuevo\",\n  \"lastName\": \"Usuario\",\n  \"phone\": \"612345678\",\n  \"city\": \"Madrid\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "register"]
+            }
+          }
+        },
+        {
+          "name": "Mi Perfil (Account)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/account",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "account"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. USUARIOS",
+      "item": [
+        {
+          "name": "Listar Todos los Usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. RESTAURANTES",
+      "item": [
+        {
+          "name": "Listar Todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/restaurants",
+              "host": ["{{baseUrl}}"],
+              "path": ["restaurants"]
+            }
+          }
+        },
+        {
+          "name": "Obtener por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["restaurants", "{{restaurantId}}"]
+            }
+          }
+        },
+        {
+          "name": "Mis Restaurantes (Owner)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/restaurants/my-restaurants",
+              "host": ["{{baseUrl}}"],
+              "path": ["restaurants", "my-restaurants"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. BOOKINGS - CRUD",
+      "item": [
+        {
+          "name": "Listar Todas las Reservas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            }
+          }
+        },
+        {
+          "name": "Crear Reserva (HOY 20:00)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var today = new Date();",
+                  "var dd = String(today.getDate()).padStart(2, '0');",
+                  "var mm = String(today.getMonth() + 1).padStart(2, '0');",
+                  "var yyyy = today.getFullYear();",
+                  "pm.collectionVariables.set('todayDate', yyyy + '-' + mm + '-' + dd);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set('bookingId', jsonData.id);",
+                  "    console.log('Booking ID guardado: ' + jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingDate\": \"{{todayDate}}\",\n  \"bookingTime\": \"20:00:00\",\n  \"numPeople\": 4,\n  \"restaurant\": {\n    \"id\": {{restaurantId}}\n  },\n  \"observations\": \"Mesa para cumpleanos\",\n  \"interior\": true,\n  \"tableNumber\": 5,\n  \"specialRequests\": \"Velas en la mesa\",\n  \"contactName\": \"Juan Perez\",\n  \"contactPhone\": \"+34612345678\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            }
+          }
+        },
+        {
+          "name": "Crear Reserva (MANANA 14:00)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var tomorrow = new Date();",
+                  "tomorrow.setDate(tomorrow.getDate() + 1);",
+                  "var dd = String(tomorrow.getDate()).padStart(2, '0');",
+                  "var mm = String(tomorrow.getMonth() + 1).padStart(2, '0');",
+                  "var yyyy = tomorrow.getFullYear();",
+                  "pm.collectionVariables.set('tomorrowDate', yyyy + '-' + mm + '-' + dd);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set('bookingId', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookingDate\": \"{{tomorrowDate}}\",\n  \"bookingTime\": \"14:00:00\",\n  \"numPeople\": 2,\n  \"restaurant\": {\n    \"id\": {{restaurantId}}\n  },\n  \"observations\": \"Almuerzo de trabajo\",\n  \"interior\": false,\n  \"tableNumber\": 8\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Reserva por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}"]
+            }
+          }
+        },
+        {
+          "name": "Reservas por Restaurante",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/filter-by-restaurant/{{restaurantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "filter-by-restaurant", "{{restaurantId}}"]
+            }
+          }
+        },
+        {
+          "name": "Reservas por Usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/filter-by-user/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "filter-by-user", "{{userId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. MIS RESERVAS (Usuario)",
+      "item": [
+        {
+          "name": "Mis Reservas (Todas)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/my-bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "my-bookings"]
+            }
+          }
+        },
+        {
+          "name": "Mis Reservas Proximas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/my-bookings/upcoming",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "my-bookings", "upcoming"]
+            }
+          }
+        },
+        {
+          "name": "Mi Historial",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/my-bookings/history",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "my-bookings", "history"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. GESTION ESTADOS (Restaurante)",
+      "item": [
+        {
+          "name": "Confirmar Reserva",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/confirm",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "confirm"]
+            }
+          }
+        },
+        {
+          "name": "Rechazar Reserva",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"No hay disponibilidad para esa fecha\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/reject",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "reject"]
+            }
+          }
+        },
+        {
+          "name": "Cancelar Reserva",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Cambio de planes\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "cancel"]
+            }
+          }
+        },
+        {
+          "name": "Completar Reserva",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/complete",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "complete"]
+            }
+          }
+        },
+        {
+          "name": "Marcar No-Show",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/no-show",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "no-show"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. BOOKINGS RESTAURANTE",
+      "item": [
+        {
+          "name": "Reservas de Hoy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/restaurant/{{restaurantId}}/today",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "restaurant", "{{restaurantId}}", "today"]
+            }
+          }
+        },
+        {
+          "name": "Reservas Pendientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/restaurant/{{restaurantId}}/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "restaurant", "{{restaurantId}}", "pending"]
+            }
+          }
+        },
+        {
+          "name": "Proximas Confirmadas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/restaurant/{{restaurantId}}/upcoming",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "restaurant", "{{restaurantId}}", "upcoming"]
+            }
+          }
+        },
+        {
+          "name": "Por Estado - PENDING",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/restaurant/{{restaurantId}}/status/PENDING",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "restaurant", "{{restaurantId}}", "status", "PENDING"]
+            }
+          }
+        },
+        {
+          "name": "Por Estado - CONFIRMED",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/restaurant/{{restaurantId}}/status/CONFIRMED",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "restaurant", "{{restaurantId}}", "status", "CONFIRMED"]
+            }
+          }
+        },
+        {
+          "name": "Por Estado - COMPLETED",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/restaurant/{{restaurantId}}/status/COMPLETED",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "restaurant", "{{restaurantId}}", "status", "COMPLETED"]
+            }
+          }
+        },
+        {
+          "name": "Por Estado - CANCELLED",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/restaurant/{{restaurantId}}/status/CANCELLED",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "restaurant", "{{restaurantId}}", "status", "CANCELLED"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. DASHBOARD",
+      "item": [
+        {
+          "name": "Dashboard Completo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/restaurant/{{restaurantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "restaurant", "{{restaurantId}}"]
+            }
+          }
+        },
+        {
+          "name": "Dashboard Quick (Resumen)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/restaurant/{{restaurantId}}/quick",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "restaurant", "{{restaurantId}}", "quick"]
+            }
+          }
+        },
+        {
+          "name": "Estadisticas Mensuales",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/restaurant/{{restaurantId}}/monthly",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "restaurant", "{{restaurantId}}", "monthly"]
+            }
+          }
+        },
+        {
+          "name": "Detalles de Hoy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/restaurant/{{restaurantId}}/today",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "restaurant", "{{restaurantId}}", "today"]
+            }
+          }
+        },
+        {
+          "name": "Reservas por Rango (2025)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/restaurant/{{restaurantId}}/bookings?start=2025-01-01&end=2025-12-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "restaurant", "{{restaurantId}}", "bookings"],
+              "query": [
+                {"key": "start", "value": "2025-01-01"},
+                {"key": "end", "value": "2025-12-31"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. DISPONIBILIDAD (FASE 2A)",
+      "item": [
+        {
+          "name": "Disponibilidad de Hoy",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var today = new Date();",
+                  "var dd = String(today.getDate()).padStart(2, '0');",
+                  "var mm = String(today.getMonth() + 1).padStart(2, '0');",
+                  "var yyyy = today.getFullYear();",
+                  "pm.collectionVariables.set('todayDate', yyyy + '-' + mm + '-' + dd);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/restaurants/{{restaurantId}}/availability?date={{todayDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "restaurants", "{{restaurantId}}", "availability"],
+              "query": [
+                {"key": "date", "value": "{{todayDate}}"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Disponibilidad Semana",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var today = new Date();",
+                  "var dd = String(today.getDate()).padStart(2, '0');",
+                  "var mm = String(today.getMonth() + 1).padStart(2, '0');",
+                  "var yyyy = today.getFullYear();",
+                  "pm.collectionVariables.set('todayDate', yyyy + '-' + mm + '-' + dd);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/restaurants/{{restaurantId}}/availability/week?startDate={{todayDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "restaurants", "{{restaurantId}}", "availability", "week"],
+              "query": [
+                {"key": "startDate", "value": "{{todayDate}}"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. HORARIOS (FASE 2A)",
+      "item": [
+        {
+          "name": "Listar Horarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/restaurants/{{restaurantId}}/schedules",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "restaurants", "{{restaurantId}}", "schedules"]
+            }
+          }
+        },
+        {
+          "name": "Crear Horario MONDAY",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dayOfWeek\": \"MONDAY\",\n  \"isOpen\": true,\n  \"openTime\": \"09:00:00\",\n  \"closeTime\": \"23:00:00\",\n  \"maxCapacity\": 50,\n  \"maxCapacityPerSlot\": 20,\n  \"slotIntervalMinutes\": 30\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/restaurants/{{restaurantId}}/schedules",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "restaurants", "{{restaurantId}}", "schedules"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. MENUS",
+      "item": [
+        {
+          "name": "Listar Menus",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menus",
+              "host": ["{{baseUrl}}"],
+              "path": ["menus"]
+            }
+          }
+        },
+        {
+          "name": "Menus por Restaurante",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/menus/filter-by-restaurant/{{restaurantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["menus", "filter-by-restaurant", "{{restaurantId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. RATINGS",
+      "item": [
+        {
+          "name": "Listar Ratings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ratings",
+              "host": ["{{baseUrl}}"],
+              "path": ["ratings"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

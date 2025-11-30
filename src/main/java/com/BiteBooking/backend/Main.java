@@ -6,24 +6,25 @@ import com.BiteBooking.backend.repository.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 @SpringBootApplication
+@EnableScheduling
+@EnableAsync
 public class Main {
 
 	public static void main(String[] args) {
 		ApplicationContext context = SpringApplication.run(Main.class, args);
 
-		// Repositorios
 		UserRepository userRepository = context.getBean(UserRepository.class);
 		
-		// Solo insertar datos de prueba si la base de datos está vacía
 		if (userRepository.count() > 0) {
 			System.out.println(">>> Base de datos ya tiene datos, saltando inicialización...");
 			return;
@@ -37,10 +38,10 @@ public class Main {
 		RatingRepository ratingRepository = context.getBean(RatingRepository.class);
 
 		PasswordEncoder passwordEncoder = context.getBean(PasswordEncoder.class);
-		User user1 = new User(null,"Jehiel"," Linarez",LocalDate.now(), "jehiel@bitefood.es", passwordEncoder.encode("admin1234"), "123456789", Role.USER,"https://i.ibb.co/gzMWwzK/profile.jpg", "Madrid", "I love Food");
-		User user2 = new User(null,"Carlos"," Feliz",LocalDate.now(), "carlos@bitefood.es", passwordEncoder.encode("admin1234"),"123456789", Role.ADMIN,"https://i.ibb.co/kKh10Bg/1682683426487.jpg", "Madrid", null);
-		User user3 = new User(null,"Gandalf","The white wizard.",LocalDate.now(), "gandalf@bitefood.es", passwordEncoder.encode("admin1234"),"639965587", Role.ADMIN,"https://i.ibb.co/zF2sWWf/gandalf2.jpg", "Tierra media", "The last grey.");
-		User user4 = new User(null, "Maria Laura", "Asuaje Palmero", LocalDate.of(1991,5,10), "malauraasuaje@bitefood.es", passwordEncoder.encode("admin1234"), "622139560", Role.ADMIN, "", "Madrid", "The Cookies Queen " );
+		User user1 = new User(null,"Jehiel","Linarez",LocalDate.now(), "jehiel@bitefood.es", passwordEncoder.encode("admin1234"), "123456789", Role.USER,"https://i.ibb.co/gzMWwzK/profile.jpg", "Madrid", "I love Food");
+		User user2 = new User(null,"Carlos","Feliz",LocalDate.now(), "carlos@bitefood.es", passwordEncoder.encode("admin1234"),"123456789", Role.ADMIN,"https://i.ibb.co/kKh10Bg/1682683426487.jpg", "Madrid", "Amante de la buena cocina");
+		User user3 = new User(null,"Gandalf","The White",LocalDate.now(), "gandalf@bitefood.es", passwordEncoder.encode("admin1234"),"639965587", Role.ADMIN,"https://i.ibb.co/zF2sWWf/gandalf2.jpg", "Tierra Media", "You shall not pass!");
+		User user4 = new User(null, "Maria Laura", "Asuaje Palmero", LocalDate.of(1991,5,10), "malauraasuaje@bitefood.es", passwordEncoder.encode("admin1234"), "622139560", Role.ADMIN, "https://i.ibb.co/gzMWwzK/profile.jpg", "Madrid", "The Cookies Queen");
 		userRepository.saveAll(List.of(user1,user2, user3, user4));
 
 		// Creacion de  Restaurant
@@ -129,40 +130,73 @@ public class Main {
 				R10,R11,R12,R13,R14,R15,R16,R17,R18,R19,
 				R20,R21,R22,R23, R24, R25, R26, R27, R28, R29,R30, R31, R32, R33, R34, R35, R36, R37, R38, R39, R40, R41, R42));
 
-		// Creación de una reserva
-		// restaurant = restaurantRepository.findById(restaurant.getId()).orElseThrow();
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user1, 4,"Sin observaciones", false, true, 12, restaurant, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user2, 5,"Sin observaciones", true, false, 412, restaurant1, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user3, 3,"Sin observaciones", false, true, 444, restaurant2, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user4, 9,"Sin observaciones", true, false, 44, restaurant3, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user1, 5,"Sin observaciones", false, true, 46, restaurant4, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user2, 7,"Sin observaciones", true, false, 12, restaurant1, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user1, 1,"Sin observaciones", false, true, 69, restaurant2, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user2, 4,"Sin observaciones", true, false, 99, restaurant3, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user3, 9,"Sin observaciones", false, true, 77, restaurant4, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user4, 2,"Sin observaciones", true, false, 88, restaurant4, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user3, 3,"Sin observaciones", false, false, 99, restaurant3, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user4, 6,"Sin observaciones", true, true, 101, restaurant2, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user1, 9,"Sin observaciones", false, false, 404, restaurant1, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user2, 4,"Sin observaciones", true, true, 901, restaurant1, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user3, 5,"Sin observaciones", false, false, 101, restaurant2, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user4, 32,"Sin observaciones", true, true, 51, restaurant1, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user3, 21,"Sin observaciones", false, false, 1231, restaurant2, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user2, 10,"Sin observaciones", true, true,323, restaurant3, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user1, 32,"Sin observaciones", false, false, 121, restaurant1, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user2, 12,"Sin observaciones", true, true, 33, restaurant1, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user3, 12,"Sin observaciones", false, false, 123, restaurant2, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user4, 31,"Sin observaciones", true, true, 123, restaurant2, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user1, 23,"Sin observaciones", false, false, 123, restaurant1, ""));
-		bookingRepository.save(new Booking(null, LocalDateTime.now(), user2, 41,"Sin observaciones", true, true, 213, restaurant3, ""));
+		// =====================================================
+		// RESERVAS DE PRUEBA - DATOS REALISTAS
+		// =====================================================
+		
+		// Fechas para las reservas
+		LocalDate hoy = LocalDate.now();
+		LocalDate manana = hoy.plusDays(1);
+		LocalDate pasadoManana = hoy.plusDays(2);
+		LocalDate enUnaSemana = hoy.plusDays(7);
+		LocalDate ayer = hoy.minusDays(1);
+		LocalDate haceDias = hoy.minusDays(3);
+		
+		// Reservas PENDIENTES (para hoy y futuro)
+		bookingRepository.save(new Booking(null, hoy, LocalTime.of(13, 30), user1, 2, 
+			"Mesa junto a la ventana si es posible", BookingStatus.PENDING, true, 5, restaurant, "Cumpleaños"));
+		bookingRepository.save(new Booking(null, hoy, LocalTime.of(20, 00), user2, 4, 
+			"Alergia a frutos secos", BookingStatus.PENDING, false, 12, restaurant, ""));
+		bookingRepository.save(new Booking(null, manana, LocalTime.of(14, 00), user3, 6, 
+			"Reunion de negocios, necesitamos privacidad", BookingStatus.PENDING, true, 8, restaurant1, "Vino tinto"));
+		bookingRepository.save(new Booking(null, manana, LocalTime.of(21, 30), user4, 2, 
+			"Cena romantica, sorpresa para mi pareja", BookingStatus.PENDING, true, 3, restaurant1, "Flores en mesa"));
+		bookingRepository.save(new Booking(null, pasadoManana, LocalTime.of(13, 00), user1, 8, 
+			"Grupo familiar con niños pequeños", BookingStatus.PENDING, false, 15, restaurant2, "Trona"));
+		
+		// Reservas CONFIRMADAS
+		bookingRepository.save(new Booking(null, hoy, LocalTime.of(14, 30), user2, 3, 
+			"Cliente VIP - servicio premium", BookingStatus.CONFIRMED, true, 1, restaurant, "Menu degustacion"));
+		bookingRepository.save(new Booking(null, hoy, LocalTime.of(21, 00), user3, 5, 
+			"Celebracion de ascenso laboral", BookingStatus.CONFIRMED, true, 10, restaurant1, "Champagne"));
+		bookingRepository.save(new Booking(null, manana, LocalTime.of(20, 30), user1, 4, 
+			"", BookingStatus.CONFIRMED, false, 7, restaurant2, ""));
+		bookingRepository.save(new Booking(null, enUnaSemana, LocalTime.of(14, 00), user4, 12, 
+			"Comida de empresa, factura a nombre de ACME S.L.", BookingStatus.CONFIRMED, true, 20, restaurant3, "Menu ejecutivo"));
+		
+		bookingRepository.save(new Booking(null, ayer, LocalTime.of(13, 00), user1, 2,
+			"Todo perfecto", BookingStatus.COMPLETED, true, 4, restaurant, ""));
+		bookingRepository.save(new Booking(null, ayer, LocalTime.of(20, 30), user2, 6, 
+			"Excelente servicio", BookingStatus.COMPLETED, false, 11, restaurant1, ""));
+		bookingRepository.save(new Booking(null, haceDias, LocalTime.of(21, 00), user3, 4, 
+			"Muy buena comida", BookingStatus.COMPLETED, true, 6, restaurant2, ""));
+		bookingRepository.save(new Booking(null, haceDias, LocalTime.of(14, 30), user4, 3, 
+			"", BookingStatus.COMPLETED, true, 9, restaurant3, "Postre especial"));
+		bookingRepository.save(new Booking(null, haceDias, LocalTime.of(13, 30), user1, 2, 
+			"Recomendare este lugar", BookingStatus.COMPLETED, false, 2, restaurant4, ""));
+		
+		bookingRepository.save(new Booking(null, hoy, LocalTime.of(19, 00), user2, 4,
+			"Cancelado por enfermedad", BookingStatus.CANCELLED, true, 14, restaurant, ""));
+		bookingRepository.save(new Booking(null, manana, LocalTime.of(21, 00), user4, 2, 
+			"Cambio de planes de ultimo momento", BookingStatus.CANCELLED, false, 5, restaurant2, ""));
+		
+		bookingRepository.save(new Booking(null, ayer, LocalTime.of(20, 00), user3, 3,
+			"Cliente no llego sin avisar", BookingStatus.NO_SHOW, true, 8, restaurant1, ""));
+		bookingRepository.save(new Booking(null, haceDias, LocalTime.of(14, 00), user1, 5, 
+			"No contestaron llamadas", BookingStatus.NO_SHOW, false, 13, restaurant3, ""));
+		
+		bookingRepository.save(new Booking(null, pasadoManana, LocalTime.of(22, 00), user2, 15,
+			"Grupo demasiado grande para nuestra capacidad", BookingStatus.REJECTED, true, 0, restaurant, ""));
+		
+		bookingRepository.save(new Booking(null, enUnaSemana, LocalTime.of(13, 00), user1, 2,
+			"Aniversario de boda", BookingStatus.PENDING, true, 1, restaurant4, "Tarta sorpresa"));
+		bookingRepository.save(new Booking(null, enUnaSemana, LocalTime.of(20, 00), user3, 6, 
+			"Despedida de soltero/a", BookingStatus.CONFIRMED, false, 16, restaurant3, "Decoracion"));
+		bookingRepository.save(new Booking(null, hoy, LocalTime.of(12, 00), user4, 3, 
+			"Almuerzo rapido de trabajo", BookingStatus.CONFIRMED, true, 4, restaurant2, ""));
+		bookingRepository.save(new Booking(null, pasadoManana, LocalTime.of(19, 30), user2, 4, 
+			"Primera cita - mesa tranquila", BookingStatus.PENDING, true, 2, restaurant4, ""));
 
 
-		//Crear Dish
-
-
-
-
-
-
-	}
+		}
 }

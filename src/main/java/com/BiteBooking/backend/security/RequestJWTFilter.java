@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -24,10 +25,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@AllArgsConstructor
 @Slf4j
 public class RequestJWTFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
+    
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+    
+    public RequestJWTFilter(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String bearerToken = request.getHeader("Authorization");
@@ -41,7 +48,7 @@ public class RequestJWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        byte[] key = Base64.getDecoder().decode("wLd39ypA5uOeydsszUh3f6OXijomn+VVIpFlaDkF86w=");
+        byte[] key = Base64.getDecoder().decode(jwtSecret);
 
         String userId = Jwts.parser().verifyWith(Keys.hmacShaKeyFor(key)).build().parseSignedClaims(token).getPayload().getSubject();
 

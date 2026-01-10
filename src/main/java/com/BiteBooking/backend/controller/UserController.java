@@ -96,7 +96,7 @@ public class UserController {
         long nextWeekMillis = TimeUnit.DAYS.toMillis(7);
         Date expirationDate = new Date(issuedDate.getTime() + nextWeekMillis);
 
-        byte[] key = Base64.getDecoder().decode("wLd39ypA5uOeydsszUh3f6OXijomn+VVIpFlaDkF86w=");
+        byte[] key = Base64.getDecoder().decode(jwtSecret);
 
         String token = Jwts.builder()
                 .subject(String.valueOf(user.getId()))

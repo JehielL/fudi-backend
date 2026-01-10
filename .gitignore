@@ -39,3 +39,13 @@ mysql_data/**
 # Ignorar archivos específicos del sistema
 *.log
 *.tmp
+
+# Production environment files
+.env.production
+.env.local
+*.env.prod
+
+# Backup files
+backups/
+*.sql
+*.sql.gz

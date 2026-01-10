@@ -22,6 +22,7 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class ScheduleController {
 
     private final RestaurantScheduleRepository scheduleRepository;

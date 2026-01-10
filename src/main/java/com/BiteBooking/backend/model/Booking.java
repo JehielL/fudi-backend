@@ -25,12 +25,12 @@ public class Booking {
     @Id
     private Long id;
 
-    // Fecha y hora de la reserva (separados para facilitar búsquedas)
     private LocalDate bookingDate;
+
     private LocalTime bookingTime;
 
-    // Timestamps
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
 
     @ManyToOne
@@ -38,43 +38,38 @@ public class Booking {
     @JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
     private User user;
 
-    private Integer numPeople;  // Renombrado de numUsers para claridad
+    private Integer numPeople;
 
     @Column(length = 500)
     private String observations;
 
-    // Estado de la reserva - usa converter para manejar valores antiguos
     @Convert(converter = BookingStatusConverter.class)
     @Column(nullable = false)
     private BookingStatus status = BookingStatus.PENDING;
 
-    private Boolean interior;  // true = interior, false = terraza/exterior
+    private Boolean interior;
 
-    private Integer tableNumber;  // Renombrado de numTable
+    private Integer tableNumber;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     @JsonIgnoreProperties({"owner", "hibernateLazyInitializer", "handler"})
     private Restaurant restaurant;
 
-    private String specialRequests;  // Renombrado de extraService
+    private String specialRequests;
 
-    // Contacto adicional (por si reserva alguien para otro)
     private String contactName;
+
     private String contactPhone;
 
-    // Motivo de cancelación/rechazo
     @Column(length = 500)
     private String cancellationReason;
 
-    // Control de notificaciones
     @Column(nullable = false)
     private Boolean reminderSent = false;
 
     @Column(nullable = false)
     private Boolean confirmationSent = false;
-
-    // Métodos helper
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -89,8 +84,8 @@ public class Booking {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Constructor completo para datos de prueba
-    public Booking(Long id, LocalDate bookingDate, LocalTime bookingTime, User user, 
+    // Constructor
+    public Booking(Long id, LocalDate bookingDate, LocalTime bookingTime, User user,
                    Integer numPeople, String observations, BookingStatus status, 
                    Boolean interior, Integer tableNumber, Restaurant restaurant, 
                    String specialRequests) {

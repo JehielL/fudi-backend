@@ -99,22 +99,13 @@ public class UserController {
         byte[] key = Base64.getDecoder().decode("wLd39ypA5uOeydsszUh3f6OXijomn+VVIpFlaDkF86w=");
 
         String token = Jwts.builder()
-                // id del usuario
                 .subject(String.valueOf(user.getId()))
-                // La clave secreta para firmar el token y saber que es nuestro cuando lleguen las peticiones del frontend
                 .signWith(Keys.hmacShaKeyFor(key))
-                // Fecha emisión del token
                 .issuedAt(issuedDate)
-                // Fecha de expiración del token
                 .expiration(expirationDate)
-                // información personalizada: rol, username, email...
                 .claim("role", user.getRole())
-                .claim("email", user.getEmail())
-                // Construye el token
-                .compact();
+                .claim("email", user.getEmail()).compact();
         return ResponseEntity.ok(new Token(token)).getBody();
-
-
     }
     @PutMapping("users/account")
     public User update(@RequestBody User user){
@@ -127,13 +118,8 @@ public class UserController {
                 throw new RuntimeException("No tiene permisos necesarios, no se puede actualizar.");
             }
         });
-
         return user;
-
-
-
     }
-
     @PostMapping("users/account/avatar")
     public User uploadAvatar(@RequestParam(value = "photo", required = false) MultipartFile file)
     {
@@ -148,7 +134,6 @@ public class UserController {
         return user;
 
     }
-
     @PutMapping("user/{id}")
     public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user){
         Optional<User> userOtp = userRepository.findById(id);

@@ -27,13 +27,9 @@ import java.util.Optional;
 @AllArgsConstructor
 @Slf4j
 public class RequestJWTFilter extends OncePerRequestFilter {
-    // cargamos el repositorio para comprobar si el usuario existe.
     private final UserRepository userRepository;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("Ejecutando");
-
-
         String bearerToken = request.getHeader("Authorization");
         String token = "";
 
@@ -45,17 +41,11 @@ public class RequestJWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        log.info("Extraido token JWT {}", token);
-
-        // verificar el token y extraer el id del usuario
-
         byte[] key = Base64.getDecoder().decode("wLd39ypA5uOeydsszUh3f6OXijomn+VVIpFlaDkF86w=");
 
         String userId = Jwts.parser().verifyWith(Keys.hmacShaKeyFor(key)).build().parseSignedClaims(token).getPayload().getSubject();
 
         log.info(userId);
-
-        // obtener el usuario cuyo id hemos extraido del jwt
 
         Optional<User> userOptional = this.userRepository.findById(Long.valueOf(userId));
 
@@ -65,16 +55,10 @@ public class RequestJWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Crear objeto autenticacion con datos del usuario y guardarlo en el contexto de seguridad de spring Security
-
         User user = userOptional.get();
         SimpleGrantedAuthority role = new SimpleGrantedAuthority(user.getRole().toString());
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user,null, List.of(role));
         SecurityContextHolder.getContext().setAuthentication(auth);
-
-        //Dejar pasar la peticion
-
-
         filterChain.doFilter(request,response);
     }
 }

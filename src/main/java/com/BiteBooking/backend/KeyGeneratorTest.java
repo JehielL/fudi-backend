@@ -14,9 +14,6 @@ public class KeyGeneratorTest {
 
         byte[] key = new byte[32];
         random.nextBytes(key);
-
-        // convertir a base 64
-
         String base64Key = Base64.getEncoder().encodeToString(key);
         System.out.println(base64Key);
     }

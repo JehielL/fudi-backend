@@ -16,6 +16,5 @@ public class SecurityUtils {
         } else {
             return Optional.empty();
         }
-
     }
 }

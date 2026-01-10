@@ -3,19 +3,16 @@ package com.BiteBooking.backend.controller;
 import com.BiteBooking.backend.dto.Login;
 import com.BiteBooking.backend.dto.Register;
 import com.BiteBooking.backend.dto.Token;
-import com.BiteBooking.backend.model.Dish;
 import com.BiteBooking.backend.model.Role;
 import com.BiteBooking.backend.model.User;
 import com.BiteBooking.backend.repository.UserRepository;
 import com.BiteBooking.backend.security.SecurityUtils;
 import com.BiteBooking.backend.service.FileService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.parsers.ReturnTypeParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.Base64;
@@ -32,13 +29,15 @@ import java.util.List;
 
 @CrossOrigin("*")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 public class UserController {
     private final FileService fileService;
-    private UserRepository userRepository;
-
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     @GetMapping("user")
     public List<User> findAll(){

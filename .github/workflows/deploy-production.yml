@@ -37,7 +37,9 @@ jobs:
             exit 1
           fi
           
-          echo "🚀 Desplegando..."          docker-compose -f docker-compose.production.yml down          docker-compose -f docker-compose.production.yml down
+          echo "🚀 Desplegando..."
+          docker-compose -f docker-compose.production.yml stop java_app || true
+          docker-compose -f docker-compose.production.yml rm -f java_app || true
           docker-compose -f docker-compose.production.yml up -d
           
           echo "⏳ Esperando que el backend inicie..."

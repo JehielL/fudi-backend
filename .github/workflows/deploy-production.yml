@@ -28,5 +28,14 @@ jobs:
           
     - name: Health Check
       run: |
-        sleep 15
-        curl -f https://api.fudi.es/actuator/health || exit 1
+        echo "Waiting for application to start..."
+        for i in {1..30}; do
+          if curl -sf https://api.fudi.es/actuator/health; then
+            echo "✅ Application is healthy!"
+            exit 0
+          fi
+          echo "Attempt $i/30 - waiting 5s..."
+          sleep 5
+        done
+        echo "❌ Health check failed after 150s"
+        exit 1

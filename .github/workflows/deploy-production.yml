@@ -1,0 +1,32 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_SSH_KEY }}
+        script: |
+          cd /opt/fudi-backend
+          git pull origin master
+          docker-compose -f docker-compose.production.yml build --no-cache
+          docker-compose -f docker-compose.production.yml up -d --force-recreate
+          docker-compose -f docker-compose.production.yml logs --tail=100
+          
+    - name: Health Check
+      run: |
+        sleep 15
+        curl -f https://api.fudi.es/actuator/health || exit 1

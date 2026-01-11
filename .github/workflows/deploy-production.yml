@@ -25,7 +25,7 @@ jobs:
           
           echo "📦 Backup de base de datos..."
           mkdir -p /root/backups
-          docker exec fudi_mysql mysqldump -u root -pFudiDB2026! BiteBooking > /root/backups/pre-deploy-$(date +%Y%m%d_%H%M%S).sql || echo "⚠️ Backup falló pero continuamos"
+          docker exec fudi_mysql mysqldump -u root -pFudiDB2026! fudidb > /root/backups/pre-deploy-$(date +%Y%m%d_%H%M%S).sql || echo "⚠️ Backup falló pero continuamos"
           find /root/backups -name "pre-deploy-*.sql" -mtime +7 -delete || true
           
           echo "🔄 Actualizando código..."
@@ -37,7 +37,7 @@ jobs:
             exit 1
           fi
           
-          echo "🚀 Desplegando..."
+          echo "🚀 Desplegando..."          docker-compose -f docker-compose.production.yml down          docker-compose -f docker-compose.production.yml down
           docker-compose -f docker-compose.production.yml up -d
           
           echo "⏳ Esperando que el backend inicie..."

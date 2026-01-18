@@ -21,7 +21,8 @@ public class CorsConfig {
         
         // Orígenes permitidos
         configuration.setAllowedOrigins(Arrays.asList(
-            "https://fudi.es",  // Producción
+            "https://fudi.es",  // Producción (sin www)
+            "https://www.fudi.es",  // Producción (con www)
             frontendUrl,  // Variable de entorno adicional (si existe)
             "http://localhost:4200",  // Desarrollo local Angular
             "http://localhost:3000"   // Desarrollo local React/Next.js

@@ -1,13 +1,13 @@
 package com.BiteBooking.backend.config;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 @Configuration
 public class CorsConfig {
@@ -19,9 +19,10 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Orígenes permitidos - se lee desde variables de entorno
+        // Orígenes permitidos
         configuration.setAllowedOrigins(Arrays.asList(
-            frontendUrl,  // URL del frontend en producción (desde .env)
+            "https://fudi.es",  // Producción
+            frontendUrl,  // Variable de entorno adicional (si existe)
             "http://localhost:4200",  // Desarrollo local Angular
             "http://localhost:3000"   // Desarrollo local React/Next.js
         ));

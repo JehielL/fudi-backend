@@ -21,6 +21,9 @@ services:
       # JWT
       - JWT_SECRET=${JWT_SECRET}
       
+      # Google OAuth
+      - GOOGLE_OAUTH_CLIENT_ID=${GOOGLE_OAUTH_CLIENT_ID}
+      
       # Email
       - EMAIL_ENABLED=${EMAIL_ENABLED:-false}
       - EMAIL_FROM=${EMAIL_FROM:-noreply@fudi.es}

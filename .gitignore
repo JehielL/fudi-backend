@@ -40,9 +40,11 @@ mysql_data/**
 *.log
 *.tmp
 
-# Production environment files
-.env.production
+# Environment files - NUNCA COMMITEAR
+.env
 .env.local
+.env.production
+.env.*.local
 *.env.prod
 
 # Backup files

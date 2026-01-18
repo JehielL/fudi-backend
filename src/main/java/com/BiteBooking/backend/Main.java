@@ -14,7 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @SpringBootApplication
 @EnableScheduling
@@ -41,10 +43,47 @@ public class Main {
 		PromotionRepository promotionRepository = context.getBean(PromotionRepository.class);
 
 		PasswordEncoder passwordEncoder = context.getBean(PasswordEncoder.class);
-		User user1 = new User(null,"Jehiel","Linarez",LocalDate.now(), "jehiel@bitefood.es", passwordEncoder.encode("admin1234"), "123456789", Role.USER,"https://i.ibb.co/gzMWwzK/profile.jpg", "Madrid", "I love Food");
-		User user2 = new User(null,"Carlos","Feliz",LocalDate.now(), "carlos@bitefood.es", passwordEncoder.encode("admin1234"),"123456789", Role.ADMIN,"https://i.ibb.co/kKh10Bg/1682683426487.jpg", "Madrid", "Amante de la buena cocina");
-		User user3 = new User(null,"Gandalf","The White",LocalDate.now(), "gandalf@bitefood.es", passwordEncoder.encode("admin1234"),"639965587", Role.ADMIN,"https://i.ibb.co/zF2sWWf/gandalf2.jpg", "Tierra Media", "You shall not pass!");
-		User user4 = new User(null, "Maria Laura", "Asuaje Palmero", LocalDate.of(1991,5,10), "malauraasuaje@bitefood.es", passwordEncoder.encode("admin1234"), "622139560", Role.ADMIN, "https://i.ibb.co/gzMWwzK/profile.jpg", "Madrid", "The Cookies Queen");
+		User user1 = User.builder()
+				.firstName("Jehiel").lastName("Linarez")
+				.birthdayDate(LocalDate.now())
+				.email("jehiel@bitefood.es")
+				.password(passwordEncoder.encode("admin1234"))
+				.phone("123456789").role(Role.USER)
+				.imgUser("https://i.ibb.co/gzMWwzK/profile.jpg")
+				.city("Madrid").aboutMe("I love Food")
+				.authProviders(new HashSet<>(Set.of(AuthProvider.LOCAL)))
+				.build();
+		User user2 = User.builder()
+				.firstName("Carlos").lastName("Feliz")
+				.birthdayDate(LocalDate.now())
+				.email("carlos@bitefood.es")
+				.password(passwordEncoder.encode("admin1234"))
+				.phone("123456789").role(Role.ADMIN)
+				.imgUser("https://i.ibb.co/kKh10Bg/1682683426487.jpg")
+				.city("Madrid").aboutMe("Amante de la buena cocina")
+				.authProviders(new HashSet<>(Set.of(AuthProvider.LOCAL)))
+				.build();
+		User user3 = User.builder()
+				.firstName("Gandalf").lastName("The White")
+				.birthdayDate(LocalDate.now())
+				.email("gandalf@bitefood.es")
+				.password(passwordEncoder.encode("admin1234"))
+				.phone("639965587").role(Role.ADMIN)
+				.imgUser("https://i.ibb.co/zF2sWWf/gandalf2.jpg")
+				.city("Tierra Media").aboutMe("You shall not pass!")
+				.authProviders(new HashSet<>(Set.of(AuthProvider.LOCAL)))
+				.build();
+		User user4 = User.builder()
+				.firstName("Maria Laura").lastName("Asuaje Palmero")
+				.birthdayDate(LocalDate.of(1991,5,10))
+				.email("malauraasuaje@bitefood.es")
+				.password(passwordEncoder.encode("admin1234"))
+				.phone("622139560").role(Role.ADMIN)
+				.imgUser("https://i.ibb.co/gzMWwzK/profile.jpg")
+				.city("Madrid").aboutMe("The Cookies Queen")
+				.authProviders(new HashSet<>(Set.of(AuthProvider.LOCAL)))
+				.build();
+		userRepository.saveAll(List.of(user1,user2, user3, user4));
 		userRepository.saveAll(List.of(user1,user2, user3, user4));
 
 		// Creación de restaurantes (mantener Oh-Toro, Maguro, SLVJ y añadir 5 top global)

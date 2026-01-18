@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/users/login", "/users/register", "/files/**", "/users/account/avatar",
-                                "/error")
+                                "/error", "/auth/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/account/avatar").permitAll()
